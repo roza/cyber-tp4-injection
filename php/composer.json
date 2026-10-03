@@ -1,0 +1,26 @@
+{
+    "name": "kineo/tp4-injection",
+    "description": "TP4 cybersécurité — sécuriser l'accès aux données (PHP / PDO)",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kineo\\": "src/"
+        }
+    },
+    "scripts": {
+        "init-db": "php bin/init-db.php",
+        "test": "phpunit"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kineo\\Tests\\": "tests/"
+        }
+    }
+}

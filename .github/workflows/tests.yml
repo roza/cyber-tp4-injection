@@ -1,0 +1,71 @@
+# Lance les tests PHP et Java, sur SQLite puis sur MariaDB, à chaque push.
+# Au départ, les tests de sécurité sont ROUGES : c'est normal, votre travail
+# consiste à les faire passer au vert (voir LISEZMOI.md).
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  php-sqlite:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: php } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: pdo_sqlite }
+      - run: composer install --no-progress
+      - run: vendor/bin/phpunit
+
+  php-mariadb:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: php } }
+    services:
+      mariadb:
+        image: mariadb:11
+        env: { MARIADB_ROOT_PASSWORD: racine, MARIADB_DATABASE: kinegest }
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=10
+    env:
+      DB_DSN: mysql:host=127.0.0.1;port=3306;dbname=kinegest;charset=utf8mb4
+      DB_USER: root
+      DB_PASS: racine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: pdo_mysql }
+      - run: composer install --no-progress
+      - run: vendor/bin/phpunit
+
+  java-sqlite:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: java } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21', cache: maven }
+      - run: mvn -B test
+
+  java-mariadb:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: java } }
+    services:
+      mariadb:
+        image: mariadb:11
+        env: { MARIADB_ROOT_PASSWORD: racine, MARIADB_DATABASE: kinegest }
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=10
+    env:
+      JDBC_URL: jdbc:mariadb://127.0.0.1:3306/kinegest
+      DB_USER: root
+      DB_PASS: racine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21', cache: maven }
+      - run: mvn -B test
