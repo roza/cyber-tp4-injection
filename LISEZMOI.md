@@ -4,16 +4,26 @@
 
 Une version simplifiée de **KinéGest**, le logiciel du cabinet Kinéo, en deux
 variantes : une application web en **PHP / PDO** et un DAO en **Java / JDBC**.
-Toutes deux fonctionnent avec **SQLite** (rien à installer) ou **MariaDB /
-MySQL**.
 
 Le code fonctionne… presque : certains patients restent introuvables, un
 utilisateur ne peut pas se connecter, certains tris plantent. Ces bugs ont tous
 la même cause, une **faille de sécurité**. Votre travail : la trouver, la
-corriger et le prouver par les tests. L'énoncé complet est dans le PDF du TP,
-sur le site du cours.
+corriger et le prouver par les tests.
 
-## 1. Récupérer le projet
+Ce fichier explique **comment faire tourner le projet**. Les questions du TP
+sont dans l'énoncé, sur le site du cours.
+
+| Partie | Contenu |
+|---|---|
+| **A — À faire** | La mise en route, pas à pas : c'est l'étape 0 du TP |
+| **B — À savoir** | Comptes de test, commandes, tests automatiques, organisation du code |
+| **C — Facultatif** | Utiliser MariaDB au lieu de SQLite (bonus de l'étape 7) |
+
+---
+
+## A — À faire : la mise en route
+
+### 1. Créer votre dépôt
 
 1. Sur la page du dépôt modèle : **Use this template** › **Create a new
    repository** — *pas « Open in a codespace » : vous n'auriez pas de dépôt à
@@ -21,59 +31,69 @@ sur le site du cours.
 2. Gardez le nom `cyber-tp4-injection`, cochez **Private**.
 3. Dans **votre** dépôt : **Settings** › **Collaborators** › **Add people** :
    ajoutez `roza`.
-4. Ouvrez **votre** dépôt dans **Codespaces** (section 2, rien à installer) —
-   ou clonez-le et ouvrez le **dossier** dans VS Code, si PHP, Composer, Java et
-   Maven sont installés sur votre poste (sections 3 et 4).
 
-*À la création du dépôt, GitHub vous écrit « All jobs have failed » : c'est
-normal, les tests de sécurité sont rouges au départ (section 6).*
+> GitHub vous écrit aussitôt « All jobs have failed » : c'est normal, les tests
+> de sécurité sont rouges au départ (voir B3).
 
-## 2. Dans GitHub Codespaces : rien à installer
+### 2. Ouvrir le projet
 
-Un navigateur suffit. Depuis la page de **votre** dépôt : **Code** ›
-**Codespaces** › **Create codespace on main**. Un VS Code s'ouvre dans le
-navigateur ; attendez la fin de l'installation, qui prend quelques minutes la
-première fois. PHP, Composer, Java et Maven y sont installés, les dépendances
-PHP aussi, et la base SQLite est déjà créée.
+**Dans GitHub Codespaces** — un navigateur suffit, rien à installer :
 
-Dans le terminal du Codespace :
+1. Sur la page de **votre** dépôt : **Code** › **Codespaces** › **Create
+   codespace on main**.
+2. Attendez la fin de l'installation : 3 à 4 minutes la première fois.
+3. Fermez l'onglet « Get Started with Java Development » s'il s'affiche :
+   n'installez **pas** de JDK, Java est déjà là.
 
-```sh
-cd php
-php -S 0.0.0.0:8000 -t public     # l'application web
-```
+**Ou sur votre poste**, si PHP 8.2 ou plus (avec `pdo_sqlite`), Composer, un
+JDK 17 ou plus et Maven y sont installés :
 
-Ouvrez le port 8000 proposé (ou l'onglet **Ports** › ouvrir dans le navigateur),
-et connectez-vous avec un des comptes de test de la section 3. Notez `0.0.0.0`
-et non `localhost` : sans cela, la page ne s'affiche pas.
+1. Clonez **votre** dépôt et ouvrez le **dossier** dans VS Code.
+2. Installez les dépendances et créez la base :
 
-Les tests se lancent comme sur un poste, dans un second terminal :
+   ```sh
+   cd php
+   composer install
+   composer init-db
+   ```
+
+### 3. Lancer l'application
+
+Dans un terminal :
+
+| Dans Codespaces | Sur votre poste |
+|---|---|
+| `cd php && php -S 0.0.0.0:8000 -t public` | `cd php && php -S localhost:8000 -t public` |
+| Ouvrez le port 8000 proposé, ou l'onglet **Ports** | Ouvrez <http://localhost:8000> |
+
+Connectez-vous avec `a.martin` / `Genou-42`.
+
+### 4. Lancer les tests
+
+Dans un **second** terminal, les mêmes commandes partout :
 
 ```sh
 cd php && vendor/bin/phpunit
+```
+
+```sh
 cd java && mvn test
 ```
 
-Le reste des sections 3 et 4 s'applique tel quel, sans les prérequis ni
-l'installation.
+**Plusieurs tests sont rouges : c'est le point de départ du TP.**
 
-*Arrêtez le Codespace quand vous avez fini (**Code** › **Codespaces** › **⋯** ›
-**Stop codespace**) : le quota gratuit est mensuel. Votre travail n'est
-conservé sur GitHub qu'après un `git push`.*
+### 5. En fin de séance
 
-## 3. La partie PHP
+1. Enregistrez votre travail : `git add`, `git commit`, `git push`. Rien n'est
+   conservé sur GitHub sans `git push`.
+2. Dans Codespaces, arrêtez le Codespace : **Code** › **Codespaces** › **⋯** ›
+   **Stop codespace**. Le quota gratuit est mensuel.
 
-Prérequis sur votre poste : PHP 8.2 ou plus, avec `pdo_sqlite` (et `pdo_mysql`
-pour MariaDB), et Composer. Vérifiez avec `php -m`.
+---
 
-```sh
-cd php
-composer install          # installe PHPUnit
-composer init-db          # crée la base SQLite var/kinegest.sqlite
-php -S localhost:8000 -t public
-```
+## B — À savoir
 
-Ouvrez <http://localhost:8000>. Comptes de test :
+### B1. Les comptes de test
 
 | Identifiant | Mot de passe |
 |---|---|
@@ -81,57 +101,27 @@ Ouvrez <http://localhost:8000>. Comptes de test :
 | `s.leroy` | `Cheville-7` |
 | `m.d'almeida` | `Epaule-17` |
 
-Les tests :
+### B2. La base de données
 
-```sh
-vendor/bin/phpunit
-```
+Par défaut, tout fonctionne avec **SQLite** : la base est un simple fichier,
+sans serveur à lancer. Il n'y a donc **rien à démarrer côté SQL**, ni dans
+Codespaces ni sur votre poste.
 
-## 4. La partie Java
+| Commande | Effet |
+|---|---|
+| `cd php && composer init-db` | (re)crée la base PHP `php/var/kinegest.sqlite` — déjà fait à l'ouverture d'un Codespace |
+| `cd java && mvn -q compile exec:java -Dexec.args="init"` | crée la base Java `java/kinegest.sqlite` |
+| `mvn -q exec:java -Dexec.args="lister ville desc"` | client Java : liste des patients, triée |
+| `mvn -q exec:java -Dexec.args="rechercher Mart"` | client Java : recherche par nom |
 
-Prérequis sur votre poste : JDK 17 ou plus, et Maven (ou VS Code avec l'extension Java).
+### B3. Les tests automatiques sur GitHub
 
-```sh
-cd java
-mvn test                                          # les tests
-mvn -q compile exec:java -Dexec.args="init"       # crée kinegest.sqlite
-mvn -q exec:java -Dexec.args="lister ville desc"
-mvn -q exec:java -Dexec.args="rechercher Mart"
-```
+À chaque `git push`, GitHub relance tous les tests, sur SQLite **et** sur
+MariaDB (onglet **Actions** de votre dépôt). Vous n'avez rien à configurer.
+**Au départ, plusieurs tests sont rouges : c'est normal.** Le TP est terminé
+quand tout est vert.
 
-## 5. Avec MariaDB ou MySQL (facultatif)
-
-Créez la base et un compte dédié à l'application (jamais `root`) :
-
-```sql
-CREATE DATABASE kinegest CHARACTER SET utf8mb4;
-CREATE USER 'kinegest_app'@'localhost' IDENTIFIED BY 'un-mot-de-passe-solide';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP ON kinegest.* TO 'kinegest_app'@'localhost';
-```
-
-*`CREATE` et `DROP` ne servent qu'à (ré)initialiser la base pendant le TP. En
-production, l'application n'aurait que `SELECT, INSERT, UPDATE, DELETE` :
-c'est le **moindre privilège**, que nous verrons en séance 9.*
-
-Puis indiquez la base par des variables d'environnement, **dans le terminal où
-vous lancez les commandes** :
-
-| | Linux, macOS, Git Bash | PowerShell |
-|---|---|---|
-| PHP | `export DB_DSN="mysql:host=127.0.0.1;dbname=kinegest;charset=utf8mb4"` | `$env:DB_DSN="mysql:host=127.0.0.1;dbname=kinegest;charset=utf8mb4"` |
-| Java | `export JDBC_URL="jdbc:mariadb://127.0.0.1:3306/kinegest"` | `$env:JDBC_URL="jdbc:mariadb://127.0.0.1:3306/kinegest"` |
-| Les deux | `export DB_USER=kinegest_app DB_PASS=...` | `$env:DB_USER="kinegest_app"; $env:DB_PASS="..."` |
-
-Les mêmes commandes (`composer init-db`, `vendor/bin/phpunit`, `mvn test`)
-travaillent alors sur MariaDB.
-
-## 6. L'intégration continue
-
-À chaque `git push`, GitHub lance tous les tests, sur SQLite **et** sur MariaDB
-(onglet **Actions**). **Au départ, plusieurs tests sont rouges : c'est normal.**
-Le TP est terminé quand tout est vert.
-
-## Organisation
+### B4. L'organisation du code
 
 ```
 sql/        schémas SQLite et MariaDB, données de test communes
@@ -143,3 +133,37 @@ java/       DAO JDBC, client en ligne de commande, tests JUnit
 
 `Schema` (PHP et Java) n'exécute que les scripts du dossier `sql/` : il n'est
 pas à corriger.
+
+---
+
+## C — Facultatif : avec MariaDB ou MySQL
+
+*Bonus de l'étape 7, **sur votre poste uniquement** : il faut un serveur
+MariaDB ou MySQL (celui de WAMP, par exemple), et il n'y en a pas dans le
+Codespace. Sans cette partie, MariaDB est tout de même testé à chaque `git
+push` (voir B3).*
+
+1. Créez la base et un compte dédié à l'application (jamais `root`) :
+
+   ```sql
+   CREATE DATABASE kinegest CHARACTER SET utf8mb4;
+   CREATE USER 'kinegest_app'@'localhost' IDENTIFIED BY 'un-mot-de-passe-solide';
+   GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP ON kinegest.* TO 'kinegest_app'@'localhost';
+   ```
+
+2. Indiquez la base par des variables d'environnement, **dans le terminal où
+   vous lancez les commandes** :
+
+   | | Linux, macOS, Git Bash | PowerShell |
+   |---|---|---|
+   | PHP | `export DB_DSN="mysql:host=127.0.0.1;dbname=kinegest;charset=utf8mb4"` | `$env:DB_DSN="mysql:host=127.0.0.1;dbname=kinegest;charset=utf8mb4"` |
+   | Java | `export JDBC_URL="jdbc:mariadb://127.0.0.1:3306/kinegest"` | `$env:JDBC_URL="jdbc:mariadb://127.0.0.1:3306/kinegest"` |
+   | Les deux | `export DB_USER=kinegest_app DB_PASS=...` | `$env:DB_USER="kinegest_app"; $env:DB_PASS="..."` |
+
+3. Relancez les mêmes commandes (`composer init-db`, `vendor/bin/phpunit`,
+   `mvn test`) : elles travaillent alors sur MariaDB. PHP a besoin de
+   l'extension `pdo_mysql`.
+
+> `CREATE` et `DROP` ne servent qu'à (ré)initialiser la base pendant le TP. En
+> production, l'application n'aurait que `SELECT, INSERT, UPDATE, DELETE` :
+> c'est le **moindre privilège**, que nous verrons en séance 9.
