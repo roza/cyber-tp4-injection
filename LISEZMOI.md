@@ -10,19 +10,61 @@ MySQL**.
 Le code fonctionne… presque : certains patients restent introuvables, un
 utilisateur ne peut pas se connecter, certains tris plantent. Ces bugs ont tous
 la même cause, une **faille de sécurité**. Votre travail : la trouver, la
-corriger et le prouver par les tests. L'énoncé complet est dans le PDF du TP.
+corriger et le prouver par les tests. L'énoncé complet est dans le PDF du TP,
+sur le site du cours.
 
 ## 1. Récupérer le projet
 
-1. Sur la page de ce dépôt : **Use this template** › **Create a new repository**.
+1. Sur la page du dépôt modèle : **Use this template** › **Create a new
+   repository** — *pas « Open in a codespace » : vous n'auriez pas de dépôt à
+   vous.*
 2. Gardez le nom `cyber-tp4-injection`, cochez **Private**.
-3. **Settings** › **Collaborators** : ajoutez `roza`.
-4. Clonez **votre** dépôt et ouvrez le **dossier** dans VS Code.
+3. Dans **votre** dépôt : **Settings** › **Collaborators** › **Add people** :
+   ajoutez `roza`.
+4. Ouvrez **votre** dépôt dans **Codespaces** (section 2, rien à installer) —
+   ou clonez-le et ouvrez le **dossier** dans VS Code, si PHP, Composer, Java et
+   Maven sont installés sur votre poste (sections 3 et 4).
 
-## 2. La partie PHP
+*À la création du dépôt, GitHub vous écrit « All jobs have failed » : c'est
+normal, les tests de sécurité sont rouges au départ (section 6).*
 
-Prérequis : PHP 8.2 ou plus, avec `pdo_sqlite` (et `pdo_mysql` pour MariaDB),
-et Composer. Vérifiez avec `php -m`.
+## 2. Dans GitHub Codespaces : rien à installer
+
+Un navigateur suffit. Depuis la page de **votre** dépôt : **Code** ›
+**Codespaces** › **Create codespace on main**. Un VS Code s'ouvre dans le
+navigateur ; attendez la fin de l'installation, qui prend quelques minutes la
+première fois. PHP, Composer, Java et Maven y sont installés, les dépendances
+PHP aussi, et la base SQLite est déjà créée.
+
+Dans le terminal du Codespace :
+
+```sh
+cd php
+php -S 0.0.0.0:8000 -t public     # l'application web
+```
+
+Ouvrez le port 8000 proposé (ou l'onglet **Ports** › ouvrir dans le navigateur),
+et connectez-vous avec un des comptes de test de la section 3. Notez `0.0.0.0`
+et non `localhost` : sans cela, la page ne s'affiche pas.
+
+Les tests se lancent comme sur un poste, dans un second terminal :
+
+```sh
+cd php && vendor/bin/phpunit
+cd java && mvn test
+```
+
+Le reste des sections 3 et 4 s'applique tel quel, sans les prérequis ni
+l'installation.
+
+*Arrêtez le Codespace quand vous avez fini (**Code** › **Codespaces** › **⋯** ›
+**Stop codespace**) : le quota gratuit est mensuel. Votre travail n'est
+conservé sur GitHub qu'après un `git push`.*
+
+## 3. La partie PHP
+
+Prérequis sur votre poste : PHP 8.2 ou plus, avec `pdo_sqlite` (et `pdo_mysql`
+pour MariaDB), et Composer. Vérifiez avec `php -m`.
 
 ```sh
 cd php
@@ -45,9 +87,9 @@ Les tests :
 vendor/bin/phpunit
 ```
 
-## 3. La partie Java
+## 4. La partie Java
 
-Prérequis : JDK 17 ou plus, et Maven (ou VS Code avec l'extension Java).
+Prérequis sur votre poste : JDK 17 ou plus, et Maven (ou VS Code avec l'extension Java).
 
 ```sh
 cd java
@@ -56,15 +98,6 @@ mvn -q compile exec:java -Dexec.args="init"       # crée kinegest.sqlite
 mvn -q exec:java -Dexec.args="lister ville desc"
 mvn -q exec:java -Dexec.args="rechercher Mart"
 ```
-
-## 4. Sans rien installer : GitHub Codespaces
-
-Depuis la page de **votre** dépôt : **Code** › **Codespaces** › **Create
-codespace on main**. PHP, Composer, Java et Maven y sont installés, et la base
-SQLite est créée au premier lancement. Pour l'application web :
-`cd php && php -S 0.0.0.0:8000 -t public`, puis ouvrez le port 8000 proposé.
-
-*Pensez à arrêter le Codespace en fin de séance : le quota gratuit est mensuel.*
 
 ## 5. Avec MariaDB ou MySQL (facultatif)
 
