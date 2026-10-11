@@ -80,7 +80,12 @@ cd php && vendor/bin/phpunit
 cd java && mvn test
 ```
 
-**Plusieurs tests sont rouges : c'est le point de départ du TP.**
+**Plusieurs tests sont rouges : c'est le point de départ du TP.** Au départ,
+PHPUnit annonce 12 tests, dont 4 erreurs et 2 échecs.
+
+> Dans Codespaces, la ligne « Xdebug: [Step Debug] Could not connect to
+> debugging client » s'affiche avant les résultats : ignorez-la, ce n'est pas
+> une erreur du TP.
 
 ### 5. En fin de séance
 
