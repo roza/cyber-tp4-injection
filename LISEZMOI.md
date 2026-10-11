@@ -41,7 +41,7 @@ sont dans l'énoncé, sur le site du cours.
 
 1. Sur la page de **votre** dépôt : **Code** › **Codespaces** › **Create
    codespace on main**.
-2. Attendez la fin de l'installation : 3 à 4 minutes la première fois.
+2. Attendez la fin de l'installation : de quelques secondes à 3 ou 4 minutes.
 3. Fermez l'onglet « Get Started with Java Development » s'il s'affiche :
    n'installez **pas** de JDK, Java est déjà là.
 
@@ -83,16 +83,16 @@ cd java && mvn test
 **Plusieurs tests sont rouges : c'est le point de départ du TP.** Au départ,
 PHPUnit annonce 12 tests, dont 4 erreurs et 2 échecs.
 
-> Dans Codespaces, la ligne « Xdebug: [Step Debug] Could not connect to
-> debugging client » s'affiche avant les résultats : ignorez-la, ce n'est pas
-> une erreur du TP.
-
 ### 5. En fin de séance
 
 1. Enregistrez votre travail : `git add`, `git commit`, `git push`. Rien n'est
    conservé sur GitHub sans `git push`.
-2. Dans Codespaces, arrêtez le Codespace : **Code** › **Codespaces** › **⋯** ›
-   **Stop codespace**. Le quota gratuit est mensuel.
+2. Dans Codespaces, arrêtez le Codespace : touche **F1**, puis **Codespaces:
+   Stop Current Codespace**. Le quota gratuit est mensuel.
+
+Tous vos Codespaces sont listés sur <https://github.com/codespaces> : vous y
+retrouvez celui du TP pour le rouvrir, l'arrêter (**⋯** › **Stop codespace**) ou
+le supprimer.
 
 ---
 
