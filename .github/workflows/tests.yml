@@ -2,12 +2,17 @@
 # Au départ, les tests de sécurité sont ROUGES : c'est normal, votre travail
 # consiste à les faire passer au vert (voir LISEZMOI.md).
 # Chaque job ajoute au résumé de l'exécution (onglet Actions) le nombre de
-# tests qui passent et la liste des tests encore rouges.
+# tests qui passent et la liste des tests encore rouges ; le même compteur
+# apparaît en statut du commit (✓ / ✗ à côté du dernier commit).
 name: tests
 
 on:
   push:
   pull_request:
+
+permissions:
+  contents: read
+  statuses: write     # publier le compteur de tests en statut du commit
 
 jobs:
   php-sqlite:
@@ -21,6 +26,9 @@ jobs:
       - run: vendor/bin/phpunit --log-junit junit.xml
       - name: Résumé des tests
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../.github/resume-tests.py "PHP · SQLite" junit.xml
 
   php-mariadb:
@@ -46,6 +54,9 @@ jobs:
       - run: vendor/bin/phpunit --log-junit junit.xml
       - name: Résumé des tests
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../.github/resume-tests.py "PHP · MariaDB" junit.xml
 
   java-sqlite:
@@ -58,6 +69,9 @@ jobs:
       - run: mvn -B test
       - name: Résumé des tests
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../.github/resume-tests.py "Java · SQLite" "target/surefire-reports/TEST-*.xml"
 
   java-mariadb:
@@ -82,4 +96,7 @@ jobs:
       - run: mvn -B test
       - name: Résumé des tests
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 ../.github/resume-tests.py "Java · MariaDB" "target/surefire-reports/TEST-*.xml"

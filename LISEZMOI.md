@@ -126,10 +126,17 @@ MariaDB (onglet **Actions** de votre dépôt). Vous n'avez rien à configurer.
 **Au départ, plusieurs tests sont rouges : c'est normal.** Le TP est terminé
 quand tout est vert.
 
-Pour suivre votre progression : onglet **Actions**, cliquez sur la dernière
-exécution. Sous les jobs, le **résumé** indique pour chacun le nombre de tests
-qui passent (par exemple « 6 / 12 tests passent ») et la liste des tests
-encore rouges. Le job reste rouge tant qu'un seul test échoue : c'est ce
+**Pour suivre votre progression**, sur la page d'accueil de votre dépôt,
+cliquez sur la croix rouge ✗ (ou la coche verte ✓) à côté du dernier commit,
+au-dessus de la liste des fichiers. Une ligne par configuration indique le
+nombre de tests qui passent, par exemple :
+
+    Tests · PHP · SQLite — 6 / 12 tests passent
+
+Pour voir **quels** tests sont encore rouges, cliquez sur **Details** en
+face d'une de ces lignes : la page de l'exécution s'ouvre, et son **résumé**
+(en bas de la page, sous les jobs) donne la liste des tests rouges.
+Une croix rouge reste affichée tant qu'un seul test échoue : c'est le
 compteur qui montre vos progrès.
 
 ### B4. L'organisation du code
