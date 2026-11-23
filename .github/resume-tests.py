@@ -20,7 +20,8 @@ total, rouges, ignores = 0, [], 0
 for f in fichiers:
     for cas in ET.parse(f).iter('testcase'):
         total += 1
-        nom = f"{cas.get('classname') or cas.get('class') or ''}::{cas.get('name')}".lstrip(':')
+        classe = (cas.get('classname') or cas.get('class') or '').split('.')[-1]   # sans le paquetage
+        nom = f"{classe}::{cas.get('name')}".lstrip(':')
         if cas.find('failure') is not None or cas.find('error') is not None:
             rouges.append(nom)
         elif cas.find('skipped') is not None:
